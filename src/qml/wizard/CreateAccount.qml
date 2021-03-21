@@ -7,6 +7,7 @@ Item {
     ListView {
         anchors.fill: parent
         anchors.margins: 10
+        spacing: 5
 
         model: steps
 

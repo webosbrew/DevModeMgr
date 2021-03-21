@@ -52,6 +52,12 @@ QVariant DeviceListModel::data(const QModelIndex &index, int role) const
             }
         }
     }
+    case Qt::UserRole:
+        if (index.row() == 0) {
+            return "header";
+        } else {
+            return "item";
+        }
     default:
         break;
     }
@@ -61,5 +67,5 @@ QVariant DeviceListModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> DeviceListModel::roleNames() const
 {
-    return { {Qt::DisplayRole, "display"} };
+    return { {Qt::DisplayRole, "display"}, {Qt::UserRole, "type"} };
 }

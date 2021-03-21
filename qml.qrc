@@ -9,5 +9,6 @@
         <file>src/qml/wizard/EnableKeyServer.qml</file>
         <file>src/qml/wizard/SetupDevice.qml</file>
         <file>src/qml/wizard/DeviceChecker.qml</file>
+        <file>src/qml/wizard/SearchDevice.qml</file>
     </qresource>
 </RCC>
