@@ -36,5 +36,8 @@ ExternalProject_Add(ares-cli
     DEPENDS node
 )
 
+set(NODE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node PARENT_SCOPE)
 set(NODE_BIN ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node/bin/node PARENT_SCOPE)
+
+set(ARES_CLI_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/ares-cli/node_modules/@webosose/ares-cli PARENT_SCOPE)
 set(ARES_CLI_PATH ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/ares-cli/node_modules/@webosose/ares-cli/bin PARENT_SCOPE)

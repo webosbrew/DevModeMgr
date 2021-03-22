@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(DevModeMgr LANGUAGES CXX)
+project(DevModeMgr LANGUAGES CXX
+    VERSION 0.1.0
+)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -58,3 +62,13 @@ target_link_libraries(DevModeMgr
   PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
 target_compile_definitions(DevModeMgr PRIVATE
   NODE_BIN="${NODE_BIN}" ARES_CLI_PATH="${ARES_CLI_PATH}")
+
+if(MSVC OR MSYS OR MINGW)
+    include(WindowsPackage)
+elseif(CMAKE_HOST_APPLE)
+    include(macOSPackage)
+elseif(CMAKE_HOST_LINUX)
+
+else()
+    message(FATAL_ERROR "Unsupported platform ${CMAKE_SYSTEM_NAME}")
+endif()
