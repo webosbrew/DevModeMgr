@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
 import QtQml 2.15
 
-Window {
+ApplicationWindow {
     width: 960
     height: 600
     visible: true

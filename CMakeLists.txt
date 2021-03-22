@@ -24,6 +24,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
+add_subdirectory(ares-cli)
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 
@@ -31,7 +33,7 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/model/DeviceListModel.cpp
         src/service/DeviceManager.cpp
-        qml.qrc
+        src/qml/qml.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -54,3 +56,5 @@ target_compile_definitions(DevModeMgr
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(DevModeMgr
   PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
+target_compile_definitions(DevModeMgr PRIVATE
+  NODE_BIN="${NODE_BIN}" ARES_CLI_PATH="${ARES_CLI_PATH}")

@@ -1,7 +1,6 @@
 #include "DeviceManager.h"
 
 #include <QProcess>
-#include <QProcessEnvironment>
 #include <QDir>
 #include <QJsonDocument>
 
@@ -31,20 +30,10 @@ QProcess* DeviceManager::aresCommand(const QString &command, const QStringList &
 {
     QProcess *process;
     process = new QProcess();
-#ifdef Q_OS_WIN
-    QProcessEnvironment sysenv = QProcessEnvironment::systemEnvironment();
     QStringList fullArgs;
-    QString sdkBinPath = sysenv.value("WEBOS_CLI_TV");
-    if (!sdkBinPath.isEmpty()) {
-        fullArgs << "/c";
-        fullArgs << QDir(sdkBinPath).filePath(command);
-    }
+    fullArgs << QDir(ARES_CLI_PATH).filePath(command);
     fullArgs << arguments;
-    process->setProgram("cmd");
+    process->setProgram(NODE_BIN);
     process->setArguments(fullArgs);
-#else
-    process->setProgram(command);
-    process->setArguments(arguments);
-#endif
     return process;
 }

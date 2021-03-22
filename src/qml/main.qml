@@ -3,7 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.12
 
-Window {
+ApplicationWindow {
     id: root
     width: 640
     height: 480
@@ -40,8 +40,15 @@ Window {
         Button {
             text: qsTr("Add device")
             onClicked: {
-                let component = Qt.createComponent("src/qml/DeviceSetupWizard.qml");
+                let component = Qt.createComponent("DeviceSetupWizard.qml");
+                if( component.status !== Component.Ready )
+                {
+                    if( component.status === Component.Error )
+                        console.debug("Error:"+ component.errorString() );
+                    return; // or maybe throw
+                }
                 let setupwnd = component.createObject(root);
+
                 setupwnd.show();
             }
         }
