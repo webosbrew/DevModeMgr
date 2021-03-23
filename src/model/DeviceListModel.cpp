@@ -1,25 +1,21 @@
 #include "DeviceListModel.h"
-#include "src/service/DeviceManager.h"
+#include <QJsonObject>
 
-enum class ColumnType: int {
-    Name = 0,
+enum ColumnType: int {
+    Name = Qt::UserRole,
     IP,
     Port,
     Max,
 };
 
-DeviceListModel::DeviceListModel()
+DeviceListModel::DeviceListModel(QObject *parent)
 {
+    Q_UNUSED(parent);
 }
 
 int DeviceListModel::rowCount(const QModelIndex &) const
 {
-    return 1 + mJson.size();
-}
-
-int DeviceListModel::columnCount(const QModelIndex &) const
-{
-    return static_cast<int>(ColumnType::Max);
+    return mJson.size();
 }
 
 QVariant DeviceListModel::data(const QModelIndex &index, int role) const
@@ -27,18 +23,6 @@ QVariant DeviceListModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
     {
-        if (index.row() == 0) {
-            switch (static_cast<ColumnType>(index.column())) {
-            case ColumnType::Name:
-                return "Name";
-            case ColumnType::IP:
-                return "IP";
-            case ColumnType::Port:
-                return "Port";
-            default:
-                return QVariant();
-            }
-        } else{
             QJsonObject item = mJson[index.row() - 1].toObject();
             switch (static_cast<ColumnType>(index.column())) {
             case ColumnType::Name:
@@ -50,14 +34,8 @@ QVariant DeviceListModel::data(const QModelIndex &index, int role) const
             default:
                 return QVariant();
             }
-        }
+
     }
-    case Qt::UserRole:
-        if (index.row() == 0) {
-            return "header";
-        } else {
-            return "item";
-        }
     default:
         break;
     }
@@ -67,5 +45,9 @@ QVariant DeviceListModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> DeviceListModel::roleNames() const
 {
-    return { {Qt::DisplayRole, "display"}, {Qt::UserRole, "type"} };
+    QHash<int, QByteArray> names;
+    names[ColumnType::Name] = "name";
+    names[ColumnType::IP] = "ip";
+    names[ColumnType::Port] = "port";
+    return names;
 }

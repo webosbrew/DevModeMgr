@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 
 project(DevModeMgr LANGUAGES CXX
     VERSION 0.1.0
@@ -67,7 +67,7 @@ if(MSVC OR MSYS OR MINGW)
     include(WindowsPackage)
 elseif(CMAKE_HOST_APPLE)
     include(macOSPackage)
-elseif(CMAKE_HOST_LINUX)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 else()
     message(FATAL_ERROR "Unsupported platform ${CMAKE_SYSTEM_NAME}")

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 
 include(ExternalProject)
 
@@ -8,9 +8,9 @@ if(MSVC OR MSYS OR MINGW)
 elseif(CMAKE_HOST_APPLE)
     set(NODEJS_BIN_URL "https://nodejs.org/dist/v14.16.0/node-v14.16.0-darwin-x64.tar.gz")
     set(NODEJS_BIN_HASH "14ec767e376d1e2e668f997065926c5c0086ec46516d1d45918af8ae05bd4583")
-elseif(CMAKE_HOST_LINUX)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(NODEJS_BIN_URL "https://nodejs.org/dist/v14.16.0/node-v14.16.0-linux-x64.tar.xz")
-    set(NODEJS_BIN_HASH "440489a08bfd020e814c9e65017f58d692299ac3f150c8e78d01abb1104c878a")
+    set(NODEJS_BIN_HASH "2e079cf638766fedd720d30ec8ffef5d6ceada4e8b441fc2a093cb9a865f4087")
 else()
     message(FATAL_ERROR "Unsupported platform ${CMAKE_SYSTEM_NAME}")
 endif()
@@ -25,10 +25,12 @@ ExternalProject_Add(node
     INSTALL_COMMAND ""
 )
 
+set(NODE_INTERNAL_PATH ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node/bin)
+
 ExternalProject_Add(ares-cli
     PREFIX ${CMAKE_SYSTEM_NAME}
 
-    DOWNLOAD_COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node/bin/npm install --prefix ares-cli @webosose/ares-cli
+    DOWNLOAD_COMMAND ${NODE_INTERNAL_PATH}/node ${NODE_INTERNAL_PATH}/npm install --prefix ares-cli @webosose/ares-cli
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""

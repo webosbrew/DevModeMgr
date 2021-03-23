@@ -14,9 +14,14 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    DeviceManager mgr;
 
-    qmlRegisterSingletonInstance("DevModeMgr", 1, 0, "DeviceManager", &mgr);
+    qmlRegisterSingletonType<DeviceManager>("DevModeMgr", 1, 0, "DeviceManager", [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject * {
+        Q_UNUSED(engine);
+        Q_UNUSED(scriptEngine);
+
+        DeviceManager *mgr = new DeviceManager();
+        return mgr;
+    });
     qmlRegisterType<DeviceListModel>("DevModeMgr", 1, 0, "DeviceListModel");
 
     QQmlApplicationEngine engine;

@@ -9,7 +9,6 @@
 class DeviceManager : public QObject
 {
     Q_OBJECT
-    QML_SINGLETON
 public:
     explicit DeviceManager(QObject *parent = nullptr);
     Q_INVOKABLE QJsonArray listDevices();
