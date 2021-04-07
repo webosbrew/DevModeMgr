@@ -23,7 +23,6 @@ Item {
             TextField  {
                 id: deviceName
                 width: parent.width
-                text: "hometv"
             }
         }
 
@@ -39,7 +38,6 @@ Item {
                 TextField  {
                     id: deviceAddress
                     width: parent.width
-                    text: "192.168.4.104"
                     validator: RegExpValidator { regExp: /^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$/ }
                 }
 
@@ -86,7 +84,6 @@ Item {
                     id: passphrase
                     width: parent.width
                     maximumLength: 6
-                    text: "FA8A17"
                     placeholderText: qsTr("6 digits, in Dev Mode app")
                     validator: RegExpValidator { regExp: /[A-Z0-9]{6}/ }
                 }

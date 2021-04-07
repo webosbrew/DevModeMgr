@@ -48,11 +48,12 @@ ApplicationWindow {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    var canJump = pages.get(index).canJump;
                     var canGoBack = !pageLoader.item.canGoBack || pageLoader.item.canGoBack();
                     var canContinue = !pageLoader.item.canContinue || pageLoader.item.canContinue();
                     if (canGoBack && index < wizardSteps.currentIndex) {
                         wizardSteps.currentIndex = index;
-                    } else if (canContinue && index > wizardSteps.currentIndex) {
+                    } else if (canContinue && index > wizardSteps.currentIndex && canJump) {
                         wizardSteps.currentIndex = index;
                     }
                 }
@@ -136,30 +137,37 @@ ApplicationWindow {
         ListElement {
             name: "Prepare Developer Account"
             page: "wizard/CreateAccount.qml"
+            canJump: true
         }
         ListElement {
             name: "Install Developer Mode App"
             page: "wizard/InstallDevMode.qml"
+            canJump: true
         }
         ListElement {
             name: "Enable Developer Mode"
             page: "wizard/EnableDevMode.qml"
+            canJump: true
         }
         ListElement {
             name: "Enable Key Server"
             page: "wizard/EnableKeyServer.qml"
+            canJump: true
         }
         ListElement {
             name: "Search Device"
             page: "wizard/SearchDevice.qml"
+            canJump: true
         }
         ListElement {
             name: "Setup Device"
             page: "wizard/SetupDevice.qml"
+            canJump: true
         }
         ListElement {
             name: "Check Device Setup"
             page: "wizard/DeviceChecker.qml"
+            canJump: false
         }
     }
 }
