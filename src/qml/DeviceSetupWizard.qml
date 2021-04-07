@@ -5,6 +5,10 @@ import QtQuick.Layouts 1.3
 ApplicationWindow {
     width: 960
     height: 600
+    minimumWidth: 960
+    minimumHeight: 600
+    maximumWidth: minimumWidth
+    maximumHeight: minimumHeight
     visible: true
     title: qsTr("Device Setup")
 
@@ -43,7 +47,15 @@ ApplicationWindow {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: wizardSteps.currentIndex = index
+                onClicked: {
+                    var canGoBack = !pageLoader.item.canGoBack || pageLoader.item.canGoBack();
+                    var canContinue = !pageLoader.item.canContinue || pageLoader.item.canContinue();
+                    if (canGoBack && index < wizardSteps.currentIndex) {
+                        wizardSteps.currentIndex = index;
+                    } else if (canContinue && index > wizardSteps.currentIndex) {
+                        wizardSteps.currentIndex = index;
+                    }
+                }
             }
         }
     }
@@ -91,18 +103,30 @@ ApplicationWindow {
         Button {
             text: "Go Back"
             visible: wizardSteps.currentIndex > 0
+            enabled: !pageLoader.item.canGoBack || pageLoader.item.canGoBack()
             onClicked: wizardSteps.currentIndex = wizardSteps.currentIndex - 1
         }
 
         Button {
             text: "Continue"
             visible: wizardSteps.currentIndex < pages.rowCount() - 1
-            onClicked: wizardSteps.currentIndex = wizardSteps.currentIndex + 1
+            enabled: !pageLoader.item.canContinue || pageLoader.item.canContinue()
+            onClicked: {
+                if (!pageLoader.item.doContinue) {
+                    wizardSteps.currentIndex = wizardSteps.currentIndex + 1;
+                } else {
+                    pageLoader.item.doContinue(function(result) {
+                        console.log('Result = ' + result);
+                        wizardSteps.currentIndex = wizardSteps.currentIndex + 1;
+                    });
+                }
+            }
         }
 
         Button {
             text: "Finish"
             visible: wizardSteps.currentIndex == pages.rowCount() - 1
+            enabled: !pageLoader.item.canFinish || pageLoader.item.canFinish()
             onClicked: close()
         }
     }

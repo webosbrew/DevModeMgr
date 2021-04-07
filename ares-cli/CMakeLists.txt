@@ -25,12 +25,20 @@ ExternalProject_Add(node
     INSTALL_COMMAND ""
 )
 
-set(NODE_INTERNAL_PATH ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node/bin)
+set(NODE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node)
+
+if(MSVC OR MSYS OR MINGW)
+    set(NODE_BIN ${NODE_DIR}/node)
+    set(NPM_PROGRAM ${NODE_DIR}/npm)
+else()
+    set(NODE_BIN ${NODE_DIR}/bin/node)
+    set(NPM_PROGRAM ${NODE_BIN} ${NODE_BIN}/npm)
+endif()
 
 ExternalProject_Add(ares-cli
     PREFIX ${CMAKE_SYSTEM_NAME}
 
-    DOWNLOAD_COMMAND ${NODE_INTERNAL_PATH}/node ${NODE_INTERNAL_PATH}/npm install --prefix ares-cli @webosose/ares-cli
+    DOWNLOAD_COMMAND ${NPM_PROGRAM} install --prefix ares-cli @webosose/ares-cli
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
@@ -38,8 +46,7 @@ ExternalProject_Add(ares-cli
     DEPENDS node
 )
 
-set(NODE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node PARENT_SCOPE)
-set(NODE_BIN ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/node/bin/node PARENT_SCOPE)
 
+set(NODE_BIN ${NODE_BIN} PARENT_SCOPE)
 set(ARES_CLI_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/ares-cli/node_modules/@webosose/ares-cli PARENT_SCOPE)
 set(ARES_CLI_PATH ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/src/ares-cli/node_modules/@webosose/ares-cli/bin PARENT_SCOPE)

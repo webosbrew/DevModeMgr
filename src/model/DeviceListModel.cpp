@@ -2,7 +2,7 @@
 #include <QJsonObject>
 
 enum ColumnType: int {
-    Name = Qt::UserRole,
+    Name = Qt::UserRole + 1,
     IP,
     Port,
     Max,
@@ -20,27 +20,17 @@ int DeviceListModel::rowCount(const QModelIndex &) const
 
 QVariant DeviceListModel::data(const QModelIndex &index, int role) const
 {
+    QJsonObject item = mJson[index.row()].toObject();
     switch (role) {
-    case Qt::DisplayRole:
-    {
-            QJsonObject item = mJson[index.row() - 1].toObject();
-            switch (static_cast<ColumnType>(index.column())) {
-            case ColumnType::Name:
-                return item["name"].toString();
-            case ColumnType::IP:
-                return item["deviceinfo"].toObject()["ip"].toString();
-            case ColumnType::Port:
-                return item["deviceinfo"].toObject()["port"].toString();
-            default:
-                return QVariant();
-            }
-
-    }
+    case ColumnType::Name:
+        return item["name"].toString();
+    case ColumnType::IP:
+        return item["deviceinfo"].toObject()["ip"].toString();
+    case ColumnType::Port:
+        return item["deviceinfo"].toObject()["port"].toString();
     default:
-        break;
+        return QVariant();
     }
-
-    return QVariant();
 }
 
 QHash<int, QByteArray> DeviceListModel::roleNames() const

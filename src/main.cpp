@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
         return mgr;
     });
     qmlRegisterType<DeviceListModel>("DevModeMgr", 1, 0, "DeviceListModel");
+    qmlRegisterType<PrivKeyDownloadCallback>("DevModeMgr", 1, 0, "PrivKeyDownloadCallback");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));

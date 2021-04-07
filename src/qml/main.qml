@@ -48,7 +48,6 @@ ApplicationWindow {
                     return; // or maybe throw
                 }
                 let setupwnd = component.createObject(root);
-
                 setupwnd.show();
             }
         }
