@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 
 import DevModeMgr 1.0
 
@@ -136,8 +137,24 @@ Item {
         }
 
         onErrored: {
-
+            console.log(message);
         }
+
+        onExists: {
+            privKeyExists.visible = true;
+        }
+
+    }
+
+    MessageDialog {
+        id: privKeyExists
+        visible: false
+        text: qsTr("PrivKey with same name already exists, overwrite?")
+        icon: StandardIcon.Question
+        standardButtons: StandardButton.Yes | StandardButton.No
+
+        onYes: privKeyCallback.answerExists(true)
+        onNo: privKeyCallback.answerExists(false)
     }
 
     function canContinue() {
@@ -148,7 +165,7 @@ Item {
     function doContinue(cb) {
         addDeviceTask.callback = cb;
         // First, download privKey from key server
-        DeviceManager.downloadPrivKey(deviceAddress.text, deviceName.text, privKeyCallback);
+        DeviceManager.downloadPrivKey(deviceAddress.text, deviceName.text, passphrase.text, privKeyCallback);
     }
 
 }

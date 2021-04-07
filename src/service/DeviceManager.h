@@ -15,7 +15,7 @@ public:
     explicit DeviceManager(QObject *parent = nullptr);
     Q_INVOKABLE QJsonArray listDevices();
     Q_INVOKABLE bool addDevice(QJsonObject info);
-    Q_INVOKABLE bool downloadPrivKey(QString address, QString device, PrivKeyDownloadCallback *callback);
+    Q_INVOKABLE bool downloadPrivKey(QString address, QString device, QString passphrase, PrivKeyDownloadCallback *callback);
 private:
     QProcess* aresCommand(const QString &command, const QStringList &arguments);
     QNetworkAccessManager networkAccessManager;
@@ -27,10 +27,18 @@ class PrivKeyDownloadCallback : public QObject
 {
     Q_OBJECT
 public:
+    friend class DeviceManager;
     explicit PrivKeyDownloadCallback(QObject *parent = nullptr);
+    Q_INVOKABLE void answerExists(bool overwrite);
 signals:
     void finished(QString privateKey);
-    void errored();
+    void errored(bool alert, QString message);
+    void exists();
+private:
+    void save();
+    QString keyPath;
+    QString keyFileName;
+    QByteArray privKey;
 };
 
 #endif // DEVICEMANAGER_H

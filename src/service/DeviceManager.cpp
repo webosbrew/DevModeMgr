@@ -3,6 +3,7 @@
 #include <QProcess>
 #include <QDir>
 #include <QJsonDocument>
+#include <QSslKey>
 
 #include <QDebug>
 
@@ -42,30 +43,36 @@ bool DeviceManager::addDevice(QJsonObject info)
     return true;
 }
 
-bool DeviceManager::downloadPrivKey(QString address, QString device, PrivKeyDownloadCallback *callback)
+bool DeviceManager::downloadPrivKey(QString address, QString device, QString passphrase, PrivKeyDownloadCallback *callback)
 {
     QString url = QString("http://%1:9991/webos_rsa").arg(address);
     QNetworkRequest request(url);
     QNetworkReply * reply = networkAccessManager.get(request);
     QObject::connect(reply, &QNetworkReply::errorOccurred, callback, [=](QNetworkReply::NetworkError err) {
-        qDebug() << err;
-        emit callback->errored();
+        emit callback->errored(true, "Error fetching PrivKey");
     });
     QObject::connect(reply, &QNetworkReply::finished, callback, [=]() {
         QByteArray privKey = reply->readAll();
+        QSslKey sslKey(privKey, QSsl::Rsa, QSsl::Pem, QSsl::PrivateKey, passphrase.toUtf8());
+        if (sslKey.isNull())
+        {
+            emit callback->errored(true, "Passphrase is not correct");
+            return;
+        }
         QString keyFileName = QString("%1_webos").arg(device);
         QDir sshDir(QDir::home().filePath(".ssh"));
         if (!sshDir.exists()) {
             QDir::home().mkdir(".ssh");
             QFile(sshDir.absolutePath()).setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOther);
         }
-        QFile keyFile(sshDir.filePath(keyFileName));
-        if (keyFile.open(QIODevice::WriteOnly)){
-            keyFile.write(privKey);
-            keyFile.flush();
-            keyFile.close();
+        callback->keyPath = sshDir.filePath(keyFileName);
+        callback->keyFileName = keyFileName;
+        callback->privKey = privKey;
+        if (QFile(callback->keyPath).exists()) {
+            emit callback->exists();
+            return;
         }
-        emit callback->finished(keyFileName);
+        callback->save();
     });
     return true;
 }
@@ -86,4 +93,26 @@ QProcess* DeviceManager::aresCommand(const QString &command, const QStringList &
 PrivKeyDownloadCallback::PrivKeyDownloadCallback(QObject *parent): QObject(parent)
 {
 
+}
+
+void PrivKeyDownloadCallback::answerExists(bool overwrite)
+{
+    if (!overwrite) {
+        emit errored(false, "PrivKey already exists");
+        return;
+    }
+    save();
+}
+
+void PrivKeyDownloadCallback::save()
+{
+    QFile file(keyPath);
+    if (!file.open(QIODevice::WriteOnly)){
+        emit errored(true, "Failed to open key file");
+        return;
+    }
+    file.write(privKey);
+    file.flush();
+    file.close();
+    emit finished(keyFileName);
 }
