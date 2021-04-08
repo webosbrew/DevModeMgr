@@ -16,6 +16,7 @@ public:
     Q_INVOKABLE QJsonArray listDevices();
     Q_INVOKABLE bool addDevice(QJsonObject info);
     Q_INVOKABLE bool downloadPrivKey(QString address, QString device, QString passphrase, PrivKeyDownloadCallback *callback);
+    Q_INVOKABLE bool openTerminal(QJsonObject device);
 private:
     QProcess* aresCommand(const QString &command, const QStringList &arguments);
     QNetworkAccessManager networkAccessManager;

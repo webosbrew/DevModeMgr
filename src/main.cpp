@@ -13,8 +13,6 @@ int main(int argc, char *argv[])
 #endif
 
     QGuiApplication app(argc, argv);
-
-
     qmlRegisterSingletonType<DeviceManager>("DevModeMgr", 1, 0, "DeviceManager", [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject * {
         Q_UNUSED(engine);
         Q_UNUSED(scriptEngine);

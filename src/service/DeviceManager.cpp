@@ -7,6 +7,10 @@
 
 #include <QDebug>
 
+#ifdef Q_OS_WINDOWS
+#include "Windows.h"
+#endif
+
 DeviceManager::DeviceManager(QObject *parent) : QObject(parent), networkAccessManager(this)
 {
 
@@ -49,12 +53,13 @@ bool DeviceManager::downloadPrivKey(QString address, QString device, QString pas
     QNetworkRequest request(url);
     QNetworkReply * reply = networkAccessManager.get(request);
     QObject::connect(reply, &QNetworkReply::errorOccurred, callback, [=](QNetworkReply::NetworkError err) {
-        emit callback->errored(true, "Error fetching PrivKey");
+        emit callback->errored(true, reply->errorString());
     });
     QObject::connect(reply, &QNetworkReply::finished, callback, [=]() {
+        if (reply->error() != QNetworkReply::NoError)
+            return;
         QByteArray privKey = reply->readAll();
-        QSslKey sslKey(privKey, QSsl::Rsa, QSsl::Pem, QSsl::PrivateKey, passphrase.toUtf8());
-        if (sslKey.isNull())
+        if (QSslSocket::supportsSsl() && QSslKey(privKey, QSsl::Rsa, QSsl::Pem, QSsl::PrivateKey, passphrase.toUtf8()).isNull())
         {
             emit callback->errored(true, "Passphrase is not correct");
             return;
@@ -75,6 +80,20 @@ bool DeviceManager::downloadPrivKey(QString address, QString device, QString pas
         callback->save();
     });
     return true;
+}
+
+bool DeviceManager::openTerminal(QJsonObject device)
+{
+    QProcess *cmd = aresCommand("ares-shell", QStringList{"-d", device["name"].toString()});
+#ifdef Q_OS_WINDOWS
+    cmd->setCreateProcessArgumentsModifier([](QProcess::CreateProcessArguments *args) {
+        args->flags |= CREATE_NEW_CONSOLE;
+        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
+    });
+#endif
+    bool ret = cmd->startDetached();
+    delete cmd;
+    return ret;
 }
 
 QProcess* DeviceManager::aresCommand(const QString &command, const QStringList &arguments)

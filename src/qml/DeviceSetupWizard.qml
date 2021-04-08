@@ -1,16 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
+import QtQml.Models 2.2
 
-ApplicationWindow {
-    width: 960
-    height: 600
-    minimumWidth: 960
-    minimumHeight: 600
-    maximumWidth: minimumWidth
-    maximumHeight: minimumHeight
-    visible: true
-    title: qsTr("Device Setup")
+Item {
 
     ListView {
         id: wizardSteps
@@ -30,11 +23,9 @@ ApplicationWindow {
         }
 
         model: pages
-        spacing: 5
-        delegate:
-            Text {
+        spacing: 10
+        delegate: Text {
             text: name
-
             anchors {
                 left: parent.left
                 right: parent.right
@@ -97,6 +88,11 @@ ApplicationWindow {
             bottomMargin: 10
         }
 
+        Button {
+            text: "Cancel"
+            onClicked: stackView.pop()
+        }
+
         Item {
             Layout.fillWidth: true
         }
@@ -128,7 +124,7 @@ ApplicationWindow {
             text: "Finish"
             visible: wizardSteps.currentIndex == pages.rowCount() - 1
             enabled: !pageLoader.item.canFinish || pageLoader.item.canFinish()
-            onClicked: close()
+            onClicked: stackView.pop()
         }
     }
 
@@ -171,3 +167,9 @@ ApplicationWindow {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

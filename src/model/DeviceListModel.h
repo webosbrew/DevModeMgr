@@ -15,9 +15,11 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    void setJson(QJsonArray &json) {
+    void setJson(QJsonArray json) {
         if (json != mJson) {
+            beginResetModel();
             mJson = json;
+            endResetModel();
             emit jsonChanged();
         }
     }

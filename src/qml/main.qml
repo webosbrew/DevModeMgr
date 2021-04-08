@@ -1,55 +1,33 @@
 import QtQuick 2.10
 import QtQuick.Window 2.10
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
 ApplicationWindow {
     id: root
-    width: 640
-    height: 480
+    width: 960
+    height: 600
+    minimumWidth: 960
+    minimumHeight: 600
+    maximumWidth: minimumWidth
+    maximumHeight: minimumHeight
     visible: true
     title: qsTr("DevMode Manager")
 
-    DeviceList {
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-            bottom: bottomBar.top
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        initialItem: deviceList
 
-            topMargin: 10
-            leftMargin: 10
-            rightMargin: 10
-            bottomMargin: 10
+        DeviceList {
+            id: deviceList
+
+            StackView.onActivated: deviceList.reloadDevices()
+        }
+
+        DeviceSetupWizard {
+            id: deviceSetupWizard
         }
     }
 
-    RowLayout  {
-        id: bottomBar
-
-        anchors {
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-
-            leftMargin: 10
-            rightMargin: 10
-            bottomMargin: 10
-        }
-
-        Button {
-            text: qsTr("Add device")
-            onClicked: {
-                let component = Qt.createComponent("DeviceSetupWizard.qml");
-                if( component.status !== Component.Ready )
-                {
-                    if( component.status === Component.Error )
-                        console.debug("Error:"+ component.errorString() );
-                    return; // or maybe throw
-                }
-                let setupwnd = component.createObject(root);
-                setupwnd.show();
-            }
-        }
-    }
 }

@@ -38,6 +38,7 @@ set(PROJECT_SOURCES
         src/model/DeviceListModel.cpp
         src/service/DeviceManager.cpp
         src/qml/qml.qrc
+        src/res/res.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

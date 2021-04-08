@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ic_terminal.svg</file>
+        <file>ic_edit.svg</file>
+    </qresource>
+</RCC>

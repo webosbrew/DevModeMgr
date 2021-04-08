@@ -137,7 +137,8 @@ Item {
         }
 
         onErrored: {
-            console.log(message);
+            setupError.errorMessage = message;
+            setupError.visible = true;
         }
 
         onExists: {
@@ -156,6 +157,16 @@ Item {
         onYes: privKeyCallback.answerExists(true)
         onNo: privKeyCallback.answerExists(false)
     }
+
+    MessageDialog {
+        id: setupError
+        visible: false
+        text: qsTr("Device setup failed: %1").arg(errorMessage)
+        standardButtons: StandardButton.Ok
+
+        property string errorMessage: ""
+    }
+
 
     function canContinue() {
         return deviceName.acceptableInput && deviceAddress.acceptableInput &&
